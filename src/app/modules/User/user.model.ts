@@ -6,12 +6,12 @@ import { TUser } from './user.interface';
 // User schema definition
 const userSchema = new Schema<TUser>(
   {
-    name: {
+    fullName: {
       type: String,
       required: [true, 'Name is required'],
       trim: true,
     },
-    phone: {
+    phoneNumber: {
       type: String,
       required: [true, 'Number is required'],
       match: [/^\d{11}$/, 'Invalid phone number format'], // Optional: Validate 11-digit numbers
@@ -33,17 +33,6 @@ const userSchema = new Schema<TUser>(
       type: String,
       enum: ['customer', 'admin'],
       default: 'customer',
-    },
-    profileImage: {
-      type: String,
-    },
-    city: {
-      type: String,
-      default: 'N/A',
-    },
-    address: {
-      type: String,
-      default: 'N/A',
     },
     isBlocked: {
       type: Boolean,
@@ -67,4 +56,4 @@ userSchema.pre('save', async function (next) {
 });
 
 // Create the Mongoose model
-export const UserModel = model<TUser>('User', userSchema);
+export const User = model<TUser>('User', userSchema);

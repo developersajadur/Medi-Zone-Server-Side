@@ -3,14 +3,11 @@ import { USER_ROLE } from './user.constant';
 
 export type TUser = {
   _id?: Types.ObjectId;
-  name: string;
+  fullName: string;
   email: string;
-  phone: number | string;
+  phoneNumber: string;
   password: string;
   role: 'customer' | 'admin';
-  profileImage?: string;
-  address?: string;
-  city?: string;
   isBlocked: boolean;
   createdAt?: Date;
   updatedAt?: Date;

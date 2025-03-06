@@ -2,15 +2,14 @@ import status from 'http-status';
 import catchAsync from '../../utils/catchAsync';
 import sendResponse from '../../utils/sendResponse';
 import { userService } from './user.service';
-import { tokenDecoder } from '../Auth/auth.utils';
 
 const createUserIntoDb = catchAsync(async (req, res) => {
   const user = await userService.createUserIntoDb(req?.body);
   const responseData = {
     _id: user._id,
-    name: user.name,
+    name: user.fullName,
     email: user.email,
-    phone: user.phone,
+    phone: user.phoneNumber,
     role: user.role,
   };
   sendResponse(res, {

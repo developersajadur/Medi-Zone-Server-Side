@@ -3,8 +3,8 @@ import { z } from 'zod';
 // Define the Zod schema for user validation
 const createUserValidation = z.object({
   body: z.object({
-    name: z.string().min(1, { message: 'Name is required' }),
-    phone: z.union([
+    fullName: z.string().min(1, { message: 'Name is required' }),
+    phoneNumber: z.union([
       z
         .string()
         .min(1, { message: 'Number is required' })
@@ -23,9 +23,6 @@ const createUserValidation = z.object({
     role: z
       .enum(['admin', 'customer'], { message: 'Invalid role' })
       .default('customer'),
-    profileImage: z.string().url().optional(),
-    city: z.string().optional().default('N/A'),
-    address: z.string().optional().default('N/A'),
     isBlocked: z.boolean().default(false), // Make carts optional
     createdAt: z.date().optional(),
     updatedAt: z.date().optional(),

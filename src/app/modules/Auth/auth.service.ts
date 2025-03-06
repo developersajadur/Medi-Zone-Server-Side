@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import status from 'http-status';
 import AppError from '../../errors/AppError';
-import { UserModel } from '../user/user.model';
+import { User } from '../user/user.model';
 import { TLoginUser } from './auth.interface';
 import bcrypt from 'bcrypt';
 import { createToken } from './auth.utils';
@@ -9,12 +9,14 @@ import config from '../../config';
 
 export type TJwtPayload = {
   userId: string;
+  fullName: string;
+  phoneNumber: string;
   email: string;
   role: string;
 };
 
 const loginUser = async (payload: TLoginUser): Promise<{ token: string }> => {
-  const user = await UserModel.findOne({ email: payload?.email }).select(
+  const user = await User.findOne({ email: payload?.email }).select(
     '+password',
   );
   if (!user) {
@@ -29,6 +31,8 @@ const loginUser = async (payload: TLoginUser): Promise<{ token: string }> => {
 
   const jwtPayload = {
     userId: user?._id.toString(),
+    fullName: user?.fullName,
+    phoneNumber: user?.phoneNumber,
     email: user?.email,
     role: user?.role,
   };
