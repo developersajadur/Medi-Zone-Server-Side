@@ -24,7 +24,7 @@ const createProductValidation = z.object({
     }),
     expiryDate: z.string(),
     isDeleted: z.boolean().default(false),
-    images: z.array(z.string()).min(1, 'Product images are required'),
+    image: z.string().min(1, 'Product images are required').optional(),
   }),
 });
 

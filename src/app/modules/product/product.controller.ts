@@ -5,15 +5,17 @@ import { productService } from "./product.service";
 
 
 const createProductIntoDb = catchAsync(async (req, res) => {
-    const product = await productService.createProductIntoDb(req?.body);
+    const file = req.file ?? undefined;
+    const product = await productService.createProductIntoDb(req.body, file);
+    
     sendResponse(res, {
         statusCode: status.OK,
         success: true,
         message: "Product created successfully",
         data: product
-    })
+    });
+});
 
-})
 
 const getAllProduct = catchAsync(async (req, res) => {
     const products = await productService.getAllProduct(req?.query);

@@ -54,8 +54,8 @@ const productSchema = new Schema<TProduct>(
       type: Boolean,
       default: false,
     },
-    images: {
-      type: [String],
+    image: {
+      type: String,
       required: [true, 'Product images are required'],
     },
   },

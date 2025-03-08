@@ -1,23 +1,35 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import slugify from 'slugify';
 import { TProduct } from './product.interface';
 import { Product } from './product.model';
 import QueryBuilder from '../../builders/QueryBuilder';
 import { productSearchableFields } from './product.constant';
+import { sendImageToCloudinary } from '../../utils/sendImageToCloudinary';
 
-const createProductIntoDb = async (product: TProduct) => {
-  let slug = slugify(product.name, { lower: true, strict: true });
-  slug = slug.replace(/[^\w\s-]/g, '');
+
+
+const createProductIntoDb = async (product: TProduct, file?: Express.Multer.File) => {
+  // console.log(product);
+
+  // Generate unique slug
+  let slug = slugify(product.name, { lower: true, strict: true }).replace(/[^\w\s-]/g, '');
   let counter = 1;
   while (await Product.findOne({ slug })) {
-    slug =
-      slugify(product.name, { lower: true, strict: true , trim: true }).replace(/[^\w\s-]/g,'',) + `-${counter}`;
+    slug = slugify(product.name, { lower: true, strict: true }).replace(/[^\w\s-]/g, '') + `-${counter}`;
     counter++;
   }
   product.slug = slug;
 
-  const result =  await Product.create(product)
+  if (file) {
+    const { secure_url } = await sendImageToCloudinary(slug, file.path);
+    product.image = secure_url as string;
+  }
+
+  const result = await Product.create(product);
   return result;
 };
+
+
 
 
 const getAllProduct = async(query: Record<string, unknown>) => {

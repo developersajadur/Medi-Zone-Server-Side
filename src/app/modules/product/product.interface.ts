@@ -4,7 +4,7 @@ export type TProduct = {
     _id?: Types.ObjectId;
     slug?: string
     name: string;
-    images: string[];
+    image: string;
     description: string;
     price: number;
     stock: number;
