@@ -20,6 +20,25 @@ router.post(
     productController.createProductIntoDb
 );
 
+
+router.put(
+    '/update-product/:id',
+    auth(USER_ROLE.admin),
+    upload.single('file'),
+    (req: Request, res: Response, next: NextFunction) => {
+        req.body = JSON.parse(req.body.data);
+        next();
+      },
+      validateRequest(ProductValidationSchema.updateProductValidation),
+    productController.updateProductInDbController
+);
+
+router.delete(
+    '/delete-product/:id',
+    auth(USER_ROLE.admin),
+    productController.deletedProductFromDB
+)
+
   
 
 router.get('/', productController.getAllProduct);
