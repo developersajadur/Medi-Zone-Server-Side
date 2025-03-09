@@ -18,7 +18,7 @@ const createProductIntoDb = async (
     '',
   );
   let counter = 1;
-  while (await Product.findOne({ slug })) {
+  while (await Product.findOne({ slug }).lean()) {
     slug =
       slugify(product.name, { lower: true, strict: true }).replace(
         /[^\w\s-]/g,
@@ -41,7 +41,7 @@ const createProductIntoDb = async (
 
 const getAllProduct = async (query: Record<string, unknown>) => {
   const productQuery = new QueryBuilder(
-    Product.find({ isDeleted: false }),
+    Product.find({ isDeleted: false }).lean(),
     query,
   )
     .search(productSearchableFields)
@@ -50,9 +50,9 @@ const getAllProduct = async (query: Record<string, unknown>) => {
     .paginate()
     .fields();
 
-  const result = await productQuery.modelQuery;
+  const products = await productQuery.modelQuery;
   const meta = await productQuery.countTotal();
-  return { result, meta };
+  return { products, meta };
 };
 
 const updateProductInDb = async (
@@ -60,7 +60,7 @@ const updateProductInDb = async (
   product: Partial<TProduct>, 
   file?: Express.Multer.File
 ) => {
-  const existingProduct = await Product.findById(productId);
+  const existingProduct = await Product.findById(productId).lean();
   if (!existingProduct) {
     throw new AppError(status.NOT_FOUND, "Product not found");
   }
@@ -89,7 +89,7 @@ const updateProductInDb = async (
     productId,
     { $set: product },
     { new: true }
-  );
+  ).lean();
 
   return updatedProduct;
 };
@@ -98,7 +98,7 @@ const updateProductInDb = async (
 
 const deletedProductFromDB = async(productId: string) => {
 
-  const existingProduct = await Product.findById(productId);
+  const existingProduct = await Product.findById(productId).lean();
   if (!existingProduct) {
     throw new AppError(status.NOT_FOUND, "Product not found");
   }
@@ -111,19 +111,29 @@ const deletedProductFromDB = async(productId: string) => {
     productId,
     { $set: { isDeleted: true } },
     { new: true }
-  );
+  ).lean();
 
   return deletedProduct;
 }
 
 
 const getOneProductBySlug = async (slug: string) => {
-  const product = await Product.findOne({slug});
+  const product = await Product.findOne({slug}).lean();
+  if (!product) {
+    throw new AppError(status.NOT_FOUND, "Product not found");
+  }else if(product.isDeleted){
+    throw new AppError(status.FORBIDDEN, "Product is deleted");
+  }
   return product;
 }
 
 const getOneProductById = async (id: string) => {
-  const product = await Product.findById(id);
+  const product = await Product.findById(id).lean();
+  if (!product) {
+    throw new AppError(status.NOT_FOUND, "Product not found");
+  }else if(product.isDeleted){
+    throw new AppError(status.FORBIDDEN, "Product is deleted");
+  }
   return product;
 }
 

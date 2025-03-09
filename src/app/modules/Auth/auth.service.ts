@@ -18,7 +18,7 @@ export type TJwtPayload = {
 const loginUser = async (payload: TLoginUser): Promise<{ token: string }> => {
   const user = await User.findOne({ email: payload?.email }).select(
     '+password',
-  );
+  ).lean();
   if (!user) {
     throw new AppError(status.NOT_FOUND, 'User Not Found');
   } else if (user?.isBlocked) {

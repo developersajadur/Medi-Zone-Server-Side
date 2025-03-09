@@ -1,11 +1,17 @@
 import { Types } from "mongoose";
 
 
+export type TPrescriptionStatus = "pending" | "approved" | "rejected";
+export type TPaymentStatus = "pending" | "paid" | "failed" | "refunded";
+export type TPaymentMethod = 'cash' | 'card' | 'online';
+export type TOrderStatus = "pending" | "processing" | "shipped" | "delivered" | "canceled";
+
+
 export type TOrderProduct = {
     product: Types.ObjectId;
     quantity: number;
     prescription?: string;
-    prescriptionStatus?: "pending" | "approved" | "rejected";
+    prescriptionStatus?:TPrescriptionStatus;
   }
 
 export type TOrder = {
@@ -13,8 +19,8 @@ export type TOrder = {
     user: Types.ObjectId;
     products: TOrderProduct[]
     totalAmount: number;
-    paymentStatus: "pending" | "paid" | "failed" | "refunded";
-    paymentMethod: 'cash' | 'card' | 'online';
+    paymentStatus: TPaymentStatus;
+    paymentMethod: TPaymentMethod;
     transactionId?: string;
     shippingAddress: {
       fullName: string;
@@ -25,7 +31,7 @@ export type TOrder = {
       phone: string;
     };
     requiresPrescription?: boolean;
-    orderStatus: "pending" | "processing" | "shipped" | "delivered" | "canceled";
+    orderStatus: TOrderStatus;
     createdAt?: Date;
     updatedAt?: Date;
   }

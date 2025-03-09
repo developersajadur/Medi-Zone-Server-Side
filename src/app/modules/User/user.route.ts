@@ -27,4 +27,7 @@ router.patch(
   auth(USER_ROLE.admin, USER_ROLE.customer),
   userController.changePassword)
 
+
+router.get('/profile/get-my-orders', auth(USER_ROLE.customer), userController.getMyOrders)
+
 export const userRoute = router;

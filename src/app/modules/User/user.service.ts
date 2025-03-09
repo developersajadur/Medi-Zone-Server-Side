@@ -6,6 +6,7 @@ import { User } from './user.model';
 import AppError from '../../errors/AppError';
 import bcrypt from 'bcrypt'
 import config from '../../config';
+import { Order } from '../order/order.model';
 
 const createUserIntoDb = async (user: TUser) => {
   const isUserExist = await User.findOne({
@@ -32,7 +33,7 @@ const createUserIntoDb = async (user: TUser) => {
 };
 
 const getAllUsers = async (query: Record<string, unknown>) => {
-  const userQuery = new QueryBuilder(User.find(), query)
+  const userQuery = new QueryBuilder(User.find().lean(), query)
     .search(userSearchableFields)
     .filter()
     .sort()
@@ -45,7 +46,7 @@ const getAllUsers = async (query: Record<string, unknown>) => {
 };
 
 const getMe = async (userId: string) => {
-  const user = await User.findById(userId);
+  const user = await User.findById(userId).lean();
   if (!user) {
     throw new AppError(status.NOT_FOUND, 'User not found');
   }
@@ -53,7 +54,7 @@ const getMe = async (userId: string) => {
 };
 
 const updateUser = async (userId: string, updatedUserData: Partial<TUser>) => {
-  const user = await User.findById(userId);
+  const user = await User.findById(userId).lean();
   if (!user) {
     throw new AppError(status.NOT_FOUND, 'User not found');
   }
@@ -68,7 +69,7 @@ const updateUser = async (userId: string, updatedUserData: Partial<TUser>) => {
 };
 
 const changePassword = async (userId: string, newPassword: string, currentPassword: string) => {
-  const user = await User.findById(userId).select('+password');
+  const user = await User.findById(userId).select('+password').lean();
   if(!user){
     throw new AppError(status.NOT_FOUND, 'User not found');
   }
@@ -90,8 +91,13 @@ const changePassword = async (userId: string, newPassword: string, currentPasswo
     userId,
     { password: hashedPassword, },
     { new: true, runValidators: true },
-  );
+  ).lean();
   return updatedUser;
+}
+
+const getMyOrders = async (userId: string) => {
+  const orders = await Order.find({ user: userId }).lean();
+  return orders;
 }
 
 export const userService = {
@@ -99,5 +105,6 @@ export const userService = {
   getAllUsers,
   getMe,
   updateUser,
-  changePassword
+  changePassword,
+  getMyOrders
 };

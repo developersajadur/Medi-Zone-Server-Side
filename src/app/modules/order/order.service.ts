@@ -1,16 +1,18 @@
 import status from "http-status";
 import { Product } from "../product/product.model";
-import { TOrder } from "./order.interface";
+import { TOrder, TOrderStatus } from "./order.interface";
 import AppError from "../../errors/AppError";
 import { Order } from "./order.model";
 import { generateTransactionId } from "../payments/payments.utils";
 import { Payment } from "../payments/payment.model";
 import { orderUtils } from "./order.utils";
 import { User } from "../user/user.model";
+import QueryBuilder from "../../builders/QueryBuilder";
+import { orderSearchableFields } from "./order.constant";
 
 
 const createOrderIntoDb = async (order: Partial<TOrder>, authUserId: string, client_ip: string) => {
-    const userData = await User.findById(authUserId);
+    const userData = await User.findById(authUserId).lean();
     if (!userData) {
         throw new AppError(status.NOT_FOUND, 'User not found');
     }
@@ -102,8 +104,56 @@ const verifyPayment = async (order_id: string) => {
     return verifiedPayment;
   };
 
+  const getAllOrderFromDb =async (query: Record<string, unknown>) => {
+    const productQuery = new QueryBuilder(
+      Order.find().lean(),
+      query,
+    )
+      .search(orderSearchableFields)
+      .filter()
+      .sort()
+      .paginate()
+      .fields();
+  
+    const orders = await productQuery.modelQuery;
+    const meta = await productQuery.countTotal();
+    return { orders, meta };
+  }
+
+
+
+  const changeOrderStatus = async (orderId: string, orderStatus: TOrderStatus) => {
+    const order = await Order.findById(orderId).lean();
+    if (!order) {
+        throw new AppError(status.NOT_FOUND, 'Order not found');
+    }
+
+    const statusOrder = ["pending", "processing", "shipped", "delivered", "canceled"];
+
+    const currentStatusIndex = statusOrder.indexOf(order.orderStatus);
+    const newStatusIndex = statusOrder.indexOf(orderStatus);
+
+    if (newStatusIndex < currentStatusIndex) {
+        throw new AppError(status.BAD_REQUEST, `Cannot reverse order status from ${order.orderStatus} to ${orderStatus}`);
+    }
+    if(order.orderStatus === orderStatus) {
+        throw new AppError(status.BAD_REQUEST, `Order status is already ${orderStatus}`);
+    }
+
+    const updatedOrderStatus = await Order.findByIdAndUpdate(
+        orderId,
+        { orderStatus: orderStatus },
+        { new: true, lean: true }
+    );
+
+    return updatedOrderStatus;
+};
+
+
 
 export const orderService = {
     createOrderIntoDb,
     verifyPayment,
+    getAllOrderFromDb,
+    changeOrderStatus
 }

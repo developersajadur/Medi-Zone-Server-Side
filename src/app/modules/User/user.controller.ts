@@ -71,10 +71,23 @@ const changePassword = catchAsync(async (req, res) => {
 })
 
 
+const getMyOrders = catchAsync(async (req, res) => {
+  const decoded = tokenDecoder(req);
+  const { userId } = decoded;
+  const userOrders = await userService.getMyOrders(userId);
+  sendResponse(res, {
+    statusCode: status.OK,
+    success: true,
+    message: 'User orders retrieved successfully',
+    data: userOrders,
+  })
+})
+
 export const userController = {
   createUserIntoDb,
   getAllUsers,
   getMe,
   updateUser,
-  changePassword
+  changePassword,
+  getMyOrders
 };

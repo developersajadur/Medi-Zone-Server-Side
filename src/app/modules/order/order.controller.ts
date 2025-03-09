@@ -3,6 +3,7 @@ import catchAsync from "../../utils/catchAsync";
 import sendResponse from "../../utils/sendResponse";
 import { tokenDecoder } from "../auth/auth.utils";
 import { orderService } from "./order.service";
+import { TOrderStatus } from "./order.interface";
 
 
 const createOrderIntoDb = catchAsync(async (req, res) => {
@@ -37,7 +38,32 @@ const createOrderIntoDb = catchAsync(async (req, res) => {
   });
 
 
+  const getAllOrderFromDb = catchAsync(async (req, res) => {
+    const orders = await orderService.getAllOrderFromDb(req?.query);
+    sendResponse(res, {
+        statusCode: status.OK,
+        success: true,
+        message: "Orders retrieved successfully",
+        data: orders
+    });
+  });
+
+
+  const changeOrderStatus = catchAsync(async (req,res) => {
+    const {orderId, orderStatus} = req.params;
+    const updatedOrder = await orderService.changeOrderStatus(orderId, orderStatus as TOrderStatus);
+    sendResponse(res, {
+      statusCode: status.OK,
+      success: true,
+      message: "Order status updated successfully",
+      data: updatedOrder,
+    })
+  })
+
+
  export const orderController = {
     createOrderIntoDb,
-    verifyPayment
+    verifyPayment,
+    getAllOrderFromDb,
+    changeOrderStatus
  };

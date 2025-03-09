@@ -14,7 +14,7 @@ const auth = (...requiredRoles: TUserRole[]) => {
   return catchAsync(async (req: Request, res: Response, next: NextFunction) => {
     const decoded = tokenDecoder(req);
     const { role, userId } = decoded;
-    const user: any = User.findById(userId);
+    const user: any = User.findById(userId).lean();
     if (!user) {
       throw new AppError(status.UNAUTHORIZED, 'User not found!');
     }

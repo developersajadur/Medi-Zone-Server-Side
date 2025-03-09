@@ -21,5 +21,9 @@ router.post(
     orderController.verifyPayment,
   );
 
+  router.get('/get-all-orders', auth(USER_ROLE.admin), orderController.getAllOrderFromDb)
+
+  router.post('/change-order-status/:orderId/:orderStatus', auth(USER_ROLE.admin), orderController.changeOrderStatus)
+
 
 export const orderRoute = router;
