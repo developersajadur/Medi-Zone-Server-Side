@@ -2,6 +2,7 @@ import status from 'http-status';
 import catchAsync from '../../utils/catchAsync';
 import sendResponse from '../../utils/sendResponse';
 import { userService } from './user.service';
+import { tokenDecoder } from '../auth/auth.utils';
 
 const createUserIntoDb = catchAsync(async (req, res) => {
   const user = await userService.createUserIntoDb(req?.body);
@@ -30,9 +31,50 @@ const getAllUsers = catchAsync(async (req, res) => {
   });
 });
 
+const getMe = catchAsync(async (req, res) => {
+      const decoded = tokenDecoder(req);
+      const { userId } = decoded;
+  const user = await userService.getMe(userId);
+  sendResponse(res, {
+    statusCode: status.OK,
+    success: true,
+    message: 'User retrieved successfully',
+    data: user,
+  });
+});
+
+const updateUser = catchAsync(async (req, res) => {
+  const decoded = tokenDecoder(req);
+  const { userId } = decoded;
+  const updatedUser = await userService.updateUser(userId, req.body);
+  sendResponse(res, {
+    statusCode: status.OK,
+    success: true,
+    message: 'User updated successfully',
+    data: updatedUser,
+  })
+})
+
+
+
+const changePassword = catchAsync(async (req, res) => {
+  const { newPassword, currentPassword } = req.body;
+  const decoded = tokenDecoder(req);
+  const { userId } = decoded;
+  const updatedUser = await userService.changePassword(userId, newPassword, currentPassword);
+  sendResponse(res, {
+    statusCode: status.OK,
+    success: true,
+    message: 'Password updated successfully',
+    data: updatedUser,
+  })
+})
 
 
 export const userController = {
   createUserIntoDb,
   getAllUsers,
+  getMe,
+  updateUser,
+  changePassword
 };

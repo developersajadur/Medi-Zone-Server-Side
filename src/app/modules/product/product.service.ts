@@ -117,9 +117,21 @@ const deletedProductFromDB = async(productId: string) => {
 }
 
 
+const getOneProductBySlug = async (slug: string) => {
+  const product = await Product.findOne({slug});
+  return product;
+}
+
+const getOneProductById = async (id: string) => {
+  const product = await Product.findById(id);
+  return product;
+}
+
 export const productService = {
   createProductIntoDb,
   getAllProduct,
   updateProductInDb,
   deletedProductFromDB,
+  getOneProductBySlug,
+  getOneProductById
 };

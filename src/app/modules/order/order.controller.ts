@@ -23,7 +23,6 @@ const createOrderIntoDb = catchAsync(async (req, res) => {
  });
 
  const verifyPayment = catchAsync(async (req, res) => {
-    console.log(req.query.order_id);
     const order = await orderService.verifyPayment(req.query.order_id as string);
   
     // Ensure we return only serializable objects

@@ -30,6 +30,29 @@ const createUserValidation = z.object({
 });
 
 
+const updateUserValidation = z.object({
+  body: z.object({
+    fullName: z.string().min(1, { message: 'Name is required' }).optional(),
+    phoneNumber: z.union([
+      z
+        .string()
+        .min(1, { message: 'Number is required' })
+        .regex(/^\d{11}$/, {
+          message: 'Phone number must be exactly 11 digits.',
+        }),
+      z.number().min(1, { message: 'Number is required' }), 
+    ]).optional(),
+    email: z
+      .string()
+      .email({ message: 'Please enter a valid email address' })
+      .min(1, { message: 'Email is required' }).optional(),
+    createdAt: z.date().optional(),
+    updatedAt: z.date().optional(),
+  }),
+});
+
+
 export const UserValidationSchema = {
   createUserValidation,
+  updateUserValidation,
 };

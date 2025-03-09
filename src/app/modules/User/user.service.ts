@@ -4,11 +4,13 @@ import { userSearchableFields } from './user.constant';
 import { TUser } from './user.interface';
 import { User } from './user.model';
 import AppError from '../../errors/AppError';
+import bcrypt from 'bcrypt'
+import config from '../../config';
 
 const createUserIntoDb = async (user: TUser) => {
   const isUserExist = await User.findOne({
     $or: [{ email: user.email }, { phoneNumber: user.phoneNumber }],
-  }).lean()
+  }).lean();
 
   if (isUserExist) {
     if (isUserExist.phoneNumber === user.phoneNumber) {
@@ -42,8 +44,60 @@ const getAllUsers = async (query: Record<string, unknown>) => {
   return { result, meta };
 };
 
+const getMe = async (userId: string) => {
+  const user = await User.findById(userId);
+  if (!user) {
+    throw new AppError(status.NOT_FOUND, 'User not found');
+  }
+  return user;
+};
+
+const updateUser = async (userId: string, updatedUserData: Partial<TUser>) => {
+  const user = await User.findById(userId);
+  if (!user) {
+    throw new AppError(status.NOT_FOUND, 'User not found');
+  }
+
+  const updatedUser = await User.findByIdAndUpdate(
+    userId,
+    { $set: updatedUserData },
+    { new: true },
+  );
+
+  return updatedUser;
+};
+
+const changePassword = async (userId: string, newPassword: string, currentPassword: string) => {
+  const user = await User.findById(userId).select('+password');
+  if(!user){
+    throw new AppError(status.NOT_FOUND, 'User not found');
+  }
+  const passwordMatch = await bcrypt.compare(currentPassword, user.password);
+  if(!passwordMatch){
+    throw new AppError(status.UNAUTHORIZED, 'Invalid current password!');
+  }
+  if (currentPassword === newPassword) {
+    throw new AppError(
+      status.BAD_REQUEST,
+      'New password cannot be the same as the current password!',
+    );
+  }
+  const hashedPassword = await bcrypt.hash(
+    newPassword,
+    Number(config.salt_rounds),
+  );
+  const updatedUser = await User.findByIdAndUpdate(
+    userId,
+    { password: hashedPassword, },
+    { new: true, runValidators: true },
+  );
+  return updatedUser;
+}
 
 export const userService = {
   createUserIntoDb,
   getAllUsers,
+  getMe,
+  updateUser,
+  changePassword
 };

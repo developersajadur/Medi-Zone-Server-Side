@@ -14,4 +14,17 @@ router.post(
 );
 router.get('/', auth(USER_ROLE.admin), userController.getAllUsers);
 
+router.get('/profile/get-me', auth(USER_ROLE.admin, USER_ROLE.customer), userController.getMe);
+
+router.put(
+  '/profile/update-me',
+  validateRequest(UserValidationSchema.updateUserValidation),
+  auth(USER_ROLE.admin, USER_ROLE.customer),
+  userController.updateUser)
+
+router.patch(
+  '/profile/change-password',
+  auth(USER_ROLE.admin, USER_ROLE.customer),
+  userController.changePassword)
+
 export const userRoute = router;

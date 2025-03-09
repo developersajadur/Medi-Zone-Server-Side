@@ -39,6 +39,10 @@ router.delete(
     productController.deletedProductFromDB
 )
 
+router.get('/:slug', productController.getOneProductBySlug)
+
+router.get('/:id', productController.getOneProductById)
+
   
 
 router.get('/', productController.getAllProduct);
