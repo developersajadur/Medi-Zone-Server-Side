@@ -4,7 +4,7 @@ import { Types } from 'mongoose';
 export type TPayment = {
   user: Types.ObjectId;
   order: Types.ObjectId;
-  method:  'cash' | 'card' | 'online';
+  method:  'cash' | 'card' | 'online' | 'shurjo-pay';
   status: 'pending' | 'paid' | 'failed';
   transactionId?: string;
   amount: number;

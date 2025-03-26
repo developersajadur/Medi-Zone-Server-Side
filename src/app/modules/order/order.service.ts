@@ -52,6 +52,7 @@ const createOrderIntoDb = async (order: Partial<TOrder>, authUserId: string, cli
         method: orderInDb.paymentMethod,
         transactionId,
         amount: orderInDb.totalAmount,
+        paymentMethod: orderInDb.paymentMethod
     });
 
     await payment.save();
@@ -145,6 +146,7 @@ const verifyPayment = async (order_id: string) => {
         { orderStatus: orderStatus },
         { new: true, lean: true }
     );
+    
 
     return updatedOrderStatus;
 };

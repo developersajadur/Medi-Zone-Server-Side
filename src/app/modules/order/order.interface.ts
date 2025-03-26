@@ -3,7 +3,7 @@ import { Types } from "mongoose";
 
 export type TPrescriptionStatus = "pending" | "approved" | "rejected";
 export type TPaymentStatus = "pending" | "paid" | "failed" | "refunded";
-export type TPaymentMethod = 'cash' | 'card' | 'online';
+export type TPaymentMethod = 'cash' | 'card' | 'online' | 'shurjo-pay';
 export type TOrderStatus = "pending" | "processing" | "shipped" | "delivered" | "canceled";
 
 

@@ -8,7 +8,7 @@ const PaymentSchema: Schema = new Schema<TPayment>(
       order: { type: Schema.Types.ObjectId, ref: 'Order', required: [true, 'Order is required'] },
       method: {
         type: String,
-        enum: ['cash', 'card', 'online'],
+        enum: ['cash', 'card', 'online', 'shurjo-pay'],
         required: [true, 'Payment method is required'],
       },
       status: {
