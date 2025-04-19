@@ -3,7 +3,7 @@ import { Product } from "../product/product.model";
 import { TOrder, TOrderStatus } from "./order.interface";
 import AppError from "../../errors/AppError";
 import { Order } from "./order.model";
-import { generateTransactionId } from "../payment/payments.utils";
+import { generateTransactionId } from "../payment/payment.utils";
 import { Payment } from "../payment/payment.model";
 import { orderUtils } from "./order.utils";
 import { User } from "../user/user.model";

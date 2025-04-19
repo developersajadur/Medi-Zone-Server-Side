@@ -22,14 +22,14 @@ const createProductValidation = z.object({
       address: z.string().min(1, 'Manufacturer address is required'),
       contact: z.string().min(1, 'Manufacturer contact is required'),
     }),
+    categories: z
+      .array(z.string().regex(/^[0-9a-fA-F]{24}$/, 'Invalid Category ID'))
+      .min(1, 'At least one category is required'),
     expiryDate: z.string(),
     isDeleted: z.boolean().default(false),
-    image: z.string().min(1, 'Product images are required').optional(),
+    image: z.string().min(1, 'Product image URL is required').optional(),
   }),
 });
-
-
-
 
 const updateProductValidation = z.object({
   body: z.object({
@@ -53,9 +53,12 @@ const updateProductValidation = z.object({
       address: z.string().min(1, 'Manufacturer address is required'),
       contact: z.string().min(1, 'Manufacturer contact is required'),
     }).optional(),
+    categories: z
+      .array(z.string().regex(/^[0-9a-fA-F]{24}$/, 'Invalid Category ID'))
+      .min(1, 'At least one category is required')
+      .optional(),
     expiryDate: z.string().optional(),
-    // isDeleted: z.boolean().default(false).optional(),
-    image: z.string().min(1, 'Product images are required').optional(),
+    image: z.string().min(1, 'Product image URL is required').optional(),
   }),
 });
 

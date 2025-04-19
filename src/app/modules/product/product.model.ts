@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import mongoose, { model, Schema } from 'mongoose';
+import mongoose, { model, Schema, Types } from 'mongoose';
 import { TProduct } from './product.interface';
 
 const productSchema = new Schema<TProduct>(
@@ -59,6 +59,12 @@ const productSchema = new Schema<TProduct>(
       type: String,
       required: [true, 'Product images are required'],
     },
+    categories: [{
+      type: Types.ObjectId,
+      ref: 'Category',
+      required: true
+    }]
+    
   },
   { timestamps: true }
 );

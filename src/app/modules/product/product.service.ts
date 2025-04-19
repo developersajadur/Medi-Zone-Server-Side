@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
+
 import slugify from 'slugify';
 import { TProduct } from './product.interface';
 import { Product } from './product.model';
@@ -13,6 +13,7 @@ const createProductIntoDb = async (
   file?: Express.Multer.File,
 ) => {
 
+  // Generate unique slug
   let slug = slugify(product.name, { lower: true, strict: true }).replace(
     /[^\w\s-]/g,
     '',
@@ -28,6 +29,7 @@ const createProductIntoDb = async (
   }
   product.slug = slug;
 
+  // Handle Image Upload
   if (file) {
     const { secure_url } = await sendImageToCloudinary(slug, file.path);
     product.image = secure_url as string;
@@ -60,6 +62,7 @@ const updateProductInDb = async (
   product: Partial<TProduct>,
   file?: Express.Multer.File
 ) => {
+
   const existingProduct = await Product.findById(productId).lean();
 
   if (!existingProduct) {
@@ -70,6 +73,10 @@ const updateProductInDb = async (
     throw new AppError(status.FORBIDDEN, "Product is deleted");
   }
 
+  // Validate categories if present
+  // if (product.categories) {
+  //   await validateCategoryIds(product.categories);
+  // }
   // Handle Slug Update
   if (product.name) {
     let slug = slugify(product.name, { lower: true, strict: true }).replace(/[^\w\s-]/g, '');
@@ -99,6 +106,7 @@ const updateProductInDb = async (
 
   return updatedProduct;
 };
+
 
 
 
