@@ -54,7 +54,7 @@ const updateProductValidation = z.object({
       contact: z.string().min(1, 'Manufacturer contact is required'),
     }).optional(),
     expiryDate: z.string().optional(),
-    isDeleted: z.boolean().default(false).optional(),
+    // isDeleted: z.boolean().default(false).optional(),
     image: z.string().min(1, 'Product images are required').optional(),
   }),
 });

@@ -28,16 +28,17 @@ const getAllProduct = catchAsync(async (req, res) => {
 })
 
 const updateProductInDbController = catchAsync(async (req, res) => {
-    const file = req.file ?? undefined;
-    const product = await productService.updateProductInDb(req.params.id, req.body, file);
-  
-    sendResponse(res, {
-      statusCode: status.OK,
-      success: true,
-      message: "Product updated successfully",
-      data: product,
-    });
+  const file = req.file ?? undefined;
+  const updatedProduct = await productService.updateProductInDb(req.params.id, req.body, file);
+
+  sendResponse(res, {
+    statusCode: status.OK,
+    success: true,
+    message: "Product updated successfully",
+    data: updatedProduct,
   });
+});
+
 
 
   const deletedProductFromDB = catchAsync(async (req, res) => {

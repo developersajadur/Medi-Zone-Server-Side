@@ -11,6 +11,7 @@ const productSchema = new Schema<TProduct>(
     },
     slug: {
       type: String,
+      unique: true,
       lowercase: true,
       trim: true,
     },

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { NextFunction, Request, Response, Router } from 'express';
 import auth from '../../middlewares/auth';
 import { USER_ROLE } from '../user/user.constant';
@@ -5,6 +6,8 @@ import validateRequest from '../../middlewares/validateRequest';
 import { ProductValidationSchema } from './product.validation';
 import { productController } from './product.controller';
 import { upload } from '../../utils/sendImageToCloudinary';
+import AppError from '../../errors/AppError';
+import status from 'http-status';
 
 const router = Router();
 
@@ -13,25 +16,34 @@ router.post(
     auth(USER_ROLE.admin),
     upload.single('file'),
     (req: Request, res: Response, next: NextFunction) => {
+      try {
         req.body = JSON.parse(req.body.data);
         next();
-      },
+      } catch (error: any) {
+        next(new AppError(status.BAD_REQUEST, error.message || "Invalid JSON format in request body."));
+      }
+    },
       validateRequest(ProductValidationSchema.createProductValidation),
     productController.createProductIntoDb
 );
 
 
 router.put(
-    '/update-product/:id',
-    auth(USER_ROLE.admin),
-    upload.single('file'),
-    (req: Request, res: Response, next: NextFunction) => {
-        req.body = JSON.parse(req.body.data);
-        next();
-      },
-      validateRequest(ProductValidationSchema.updateProductValidation),
-    productController.updateProductInDbController
+  '/update-product/:id',
+  auth(USER_ROLE.admin),
+  upload.single('file'),
+  (req: Request, res: Response, next: NextFunction) => {
+    try {
+      req.body = JSON.parse(req.body.data);
+      next();
+    } catch (error: any) {
+      next(new AppError(status.BAD_REQUEST, error.message || "Invalid JSON format in request body."));
+    }
+  },
+  validateRequest(ProductValidationSchema.updateProductValidation),
+  productController.updateProductInDbController
 );
+
 
 router.delete(
     '/delete-product/:id',

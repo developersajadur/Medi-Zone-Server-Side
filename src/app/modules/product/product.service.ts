@@ -57,14 +57,16 @@ const getAllProduct = async (query: Record<string, unknown>) => {
 
 const updateProductInDb = async (
   productId: string,
-  product: Partial<TProduct>, 
+  product: Partial<TProduct>,
   file?: Express.Multer.File
 ) => {
   const existingProduct = await Product.findById(productId).lean();
+
   if (!existingProduct) {
     throw new AppError(status.NOT_FOUND, "Product not found");
   }
-  if(existingProduct.isDeleted){
+
+  if (existingProduct.isDeleted) {
     throw new AppError(status.FORBIDDEN, "Product is deleted");
   }
 
@@ -72,8 +74,9 @@ const updateProductInDb = async (
   if (product.name) {
     let slug = slugify(product.name, { lower: true, strict: true }).replace(/[^\w\s-]/g, '');
     let counter = 1;
+
     while (await Product.findOne({ _id: { $ne: productId }, slug })) {
-      slug = slugify(product.name, { lower: true, strict: true }).replace(/[^\w\s-]/g, '') + `-${counter}`;
+      slug = `${slugify(product.name, { lower: true, strict: true }).replace(/[^\w\s-]/g, '')}-${counter}`;
       counter++;
     }
     product.slug = slug;
@@ -81,7 +84,10 @@ const updateProductInDb = async (
 
   // Handle Image Upload
   if (file) {
-    const { secure_url } = await sendImageToCloudinary(product.slug || existingProduct.slug, file.path);
+    const { secure_url } = await sendImageToCloudinary(
+      `${product.slug || existingProduct.slug}-${Date.now()}`,
+      file.path
+    );
     product.image = secure_url as string;
   }
 
