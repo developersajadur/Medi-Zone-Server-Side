@@ -27,36 +27,53 @@ class QueryBuilder<T> {
   }
 
   filter() {
-    const queryObj = { ...this.query }; // copy
-
-    // Filtering
+    const queryObj = { ...this.query };
+  
     const excludeFields = ['search', 'sort', 'limit', 'page', 'fields'];
-    excludeFields.forEach((el) => delete queryObj[el]);
-
-    // Handle minPrice and maxPrice filtering
+    excludeFields.forEach(el => delete queryObj[el]);
+  
+    // Handle price
     if (queryObj.minPrice || queryObj.maxPrice) {
       const priceQuery: Record<string, any> = {};
-
+  
       if (queryObj.minPrice) {
-        priceQuery['$gte'] = queryObj.minPrice; // minPrice filter
+        priceQuery['$gte'] = queryObj.minPrice;
         delete queryObj.minPrice;
       }
-
+  
       if (queryObj.maxPrice) {
-        priceQuery['$lte'] = queryObj.maxPrice; // maxPrice filter
+        priceQuery['$lte'] = queryObj.maxPrice;
         delete queryObj.maxPrice;
       }
-
-      // If price filter exists, add to the query
+  
       if (Object.keys(priceQuery).length > 0) {
         queryObj['price'] = priceQuery;
       }
     }
-
+  
+    // Handle rating
+    if (queryObj.minRating || queryObj.maxRating) {
+      const ratingQuery: Record<string, any> = {};
+  
+      if (queryObj.minRating) {
+        ratingQuery['$gte'] = queryObj.minRating;
+        delete queryObj.minRating;
+      }
+  
+      if (queryObj.maxRating) {
+        ratingQuery['$lte'] = queryObj.maxRating;
+        delete queryObj.maxRating;
+      }
+  
+      if (Object.keys(ratingQuery).length > 0) {
+        queryObj['rating'] = ratingQuery;
+      }
+    }
+  
     this.modelQuery = this.modelQuery.find(queryObj as FilterQuery<T>);
-
     return this;
   }
+  
 
   sort() {
     const sort =
