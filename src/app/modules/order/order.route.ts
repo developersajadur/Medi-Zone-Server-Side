@@ -2,6 +2,8 @@ import { Router } from "express";
 import { USER_ROLE } from "../user/user.constant";
 import auth from "../../middlewares/auth";
 import { orderController } from "./order.controller";
+import validateRequest from "../../middlewares/validateRequest";
+import { OrderValidationSchema } from "./order.validation";
 
 
 const router = Router()
@@ -17,6 +19,7 @@ router.post(
 
   router.get(
     '/verify-payment',
+    validateRequest(OrderValidationSchema.createOrderValidation),
     auth(USER_ROLE.customer),
     orderController.verifyPayment,
   );

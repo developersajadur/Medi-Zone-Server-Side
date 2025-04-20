@@ -8,7 +8,6 @@ export type TProduct = {
   description: string;
   price: number;
   stock: number;
-  requiresPrescription: boolean;
   manufacturer: {
     name: string;
     address: string;

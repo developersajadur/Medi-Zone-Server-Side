@@ -16,7 +16,6 @@ const createProductValidation = z.object({
       .refine((value) => value >= 0, {
         message: 'Stock cannot be negative',
       }),
-    requiresPrescription: z.boolean(),
     manufacturer: z.object({
       name: z.string().min(1, 'Manufacturer name is required'),
       address: z.string().min(1, 'Manufacturer address is required'),

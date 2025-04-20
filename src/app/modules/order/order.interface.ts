@@ -1,7 +1,7 @@
 import { Types } from "mongoose";
 
 
-export type TPrescriptionStatus = "pending" | "approved" | "rejected";
+// export type TPrescriptionStatus = "pending" | "approved" | "rejected";
 export type TPaymentStatus = "pending" | "paid" | "failed" | "refunded";
 export type TPaymentMethod = 'cash' | 'card' | 'online' | 'shurjo-pay';
 export type TOrderStatus = "pending" | "processing" | "shipped" | "delivered" | "canceled";
@@ -10,12 +10,10 @@ export type TOrderStatus = "pending" | "processing" | "shipped" | "delivered" | 
 export type TOrderProduct = {
     product: Types.ObjectId;
     quantity: number;
-    prescription?: string;
-    prescriptionStatus?:TPrescriptionStatus;
   }
 
 export type TOrder = {
-    _id?: string;
+    _id: string;
     user: Types.ObjectId;
     products: TOrderProduct[]
     totalAmount: number;
@@ -30,7 +28,6 @@ export type TOrder = {
       country: string;
       phone: string;
     };
-    requiresPrescription?: boolean;
     orderStatus: TOrderStatus;
     createdAt?: Date;
     updatedAt?: Date;

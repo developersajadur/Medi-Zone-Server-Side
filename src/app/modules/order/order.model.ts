@@ -5,12 +5,6 @@ import { TOrder, TOrderProduct } from "./order.interface";
 const OrderProductSchema = new Schema<TOrderProduct>({
     product: { type: Schema.Types.ObjectId, ref: "Product", required: [true, "Product is required"] },
     quantity: { type: Number, required: [true, "Quantity is required"], min: [1, "Quantity must be at least 1"] },
-    prescription: { type: String },
-    prescriptionStatus: {
-      type: String,
-      enum: ["pending", "approved", "rejected"],
-      default: "pending",
-    },
 });
 
 const OrderSchema = new Schema<TOrder>(
@@ -38,7 +32,6 @@ const OrderSchema = new Schema<TOrder>(
       country: { type: String, required: [true, "Country is required"] },
       phone: { type: String, required: [true, "Phone number is required"] },
     },
-    requiresPrescription: { type: Boolean, default: false },
     orderStatus: {
       type: String,
       enum: ["pending", "processing", "shipped", "delivered", "canceled"],

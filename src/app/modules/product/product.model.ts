@@ -29,10 +29,6 @@ const productSchema = new Schema<TProduct>(
       required: [true, 'Product stock is required'],
       min: [0, 'Stock cannot be negative'],
     },
-    requiresPrescription: {
-      type: Boolean,
-      required: [true, 'Prescription requirement is required'],
-    },
     manufacturer: {
       name: {
         type: String,
